@@ -39,3 +39,24 @@ cue vet -c '#ReleaseWorkflow' <repo>/.github/workflows/release.yml
 
 Workflows are validated after a `yaml.Unmarshal`-conformant conversion —
 see the schema files for the exact invocation each policy expects.
+
+## Pin watching
+
+Two pins must agree, and both need periodic re-checks (nixpkgs can move,
+CUE is pre-1.0 and may churn between minors):
+
+```bash
+nix eval --raw nixpkgs#cue.version        # the nixpkgs pin (0.17.1 as of 2026-11-02)
+cue version                                # the installed binary
+```
+
+- When CUE ships a new minor (v0.18+), re-run the self-check
+  (`cue vet -c .`) and the httputil vet invocations before bumping any
+  consumer pin — schemas may need `cue fmt` or constraint updates.
+- When nixpkgs updates the package, confirm the version still vets the
+  fleet schemas clean, then record the new pin here and in the consumer
+  repos' CI (`go install cuelang.org/go/cmd/cue@vX.Y.Z` + the checkout SHA).
+- Consumer CI pins TWO things independently: the cue tool version and this
+  repo's commit SHA. A schema change without a consumer SHA bump silently
+  enforces the old policy forever; a tool bump without a schema check can
+  enforce the wrong one.
