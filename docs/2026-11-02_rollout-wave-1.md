@@ -7,16 +7,16 @@ cue v0.17.1) against every workflow of three fleet repos, read-only.
 
 ## Results after schema generalization
 
-| Repo              | Workflow           | Schema            | Result |
-| ----------------- | ------------------ | ----------------- | ------ |
-| library-policy    | ci.yml             | #CIWorkflow       | PASS   |
-| library-policy    | release.yml        | #ReleaseWorkflow  | **FINDING: no concurrency guard** |
-| go-etag           | ci.yml             | #CIWorkflow       | PASS   |
-| go-etag           | release.yml        | #ReleaseWorkflow  | **FINDING: no concurrency guard** |
-| go-error-family   | ci.yml             | #CIWorkflow       | PASS   |
-| go-error-family   | website-check.yml  | #CIWorkflow       | PASS   |
-| go-error-family   | website-deploy.yml | #CIWorkflow       | PASS   |
-| go-error-family   | release.yml        | #ReleaseWorkflow  | **FINDING: no concurrency guard** |
+| Repo            | Workflow           | Schema           | Result                            |
+| --------------- | ------------------ | ---------------- | --------------------------------- |
+| library-policy  | ci.yml             | #CIWorkflow      | PASS                              |
+| library-policy  | release.yml        | #ReleaseWorkflow | **FINDING: no concurrency guard** |
+| go-etag         | ci.yml             | #CIWorkflow      | PASS                              |
+| go-etag         | release.yml        | #ReleaseWorkflow | **FINDING: no concurrency guard** |
+| go-error-family | ci.yml             | #CIWorkflow      | PASS                              |
+| go-error-family | website-check.yml  | #CIWorkflow      | PASS                              |
+| go-error-family | website-deploy.yml | #CIWorkflow      | PASS                              |
+| go-error-family | release.yml        | #ReleaseWorkflow | **FINDING: no concurrency guard** |
 
 ## Triage
 

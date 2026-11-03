@@ -11,18 +11,18 @@
 
 ## The matrix
 
-| Check class | finding | cue vet `#ReleaseWorkflow` | actionlint 1.7.12 | remediation |
-| --- | --- | --- | --- | --- |
-| Missing concurrency guard on the release publish job | release.yml had none | **CAUGHT** — `concurrency: field is required but not present` | not checked (no such rule) | fixed same-session (`release-${{ github.ref }}`, no cancel) |
-| Attacker-controlled `github.head_ref` spliced inline into `run:` | ci.yml:255 commit-lint step | not checked (out of schema scope: expression semantics) | **CAUGHT** — `expression` rule, env-var mitigation prescribed | fixed same-session (env indirection) |
-| env pin formats (`GOTOOLCHAIN: goX.Y.Z` exact, `GOLANGCI_LINT_VERSION: vX.Y.Z`, `GO_VERSION` float-or-patch) | all conform | **enforced** (regex violations fail vet) | not checked (no format policy) | n/a |
-| Actions pinned to 40-char commit SHAs | all conform | **enforced** | partially (shellcheck/scoring only; pinning is advisory in scoreboard mode) | n/a |
-| Runner allowlist (`ubuntu-latest` only) | all conform | **enforced** | not checked | n/a |
-| Least-privilege workflow `permissions` (`contents: write` exactly) | conforms | **enforced** | not checked | n/a |
-| Tag-only trigger shape (`([a-z0-9_-]+/)?v*` globs) | conforms | **enforced** | not checked | n/a |
-| Workflow-type discrimination (negative control: release schema vs ci.yml) | — | **rejects loudly** (`on.pull_request: field not allowed`) | n/a (single generic checker) | n/a |
-| Expression syntax/semantics, matrix expansion, shell quoting inside `run:` | — | not covered (deliberate) | **core competency** | n/a |
-| `on:` YAML key handling | — | parses correctly as the string `"on"` (no YAML 1.1 bool-true mangling) | n/a | n/a |
+| Check class                                                                                                  | finding                     | cue vet `#ReleaseWorkflow`                                             | actionlint 1.7.12                                                           | remediation                                                 |
+| ------------------------------------------------------------------------------------------------------------ | --------------------------- | ---------------------------------------------------------------------- | --------------------------------------------------------------------------- | ----------------------------------------------------------- |
+| Missing concurrency guard on the release publish job                                                         | release.yml had none        | **CAUGHT** — `concurrency: field is required but not present`          | not checked (no such rule)                                                  | fixed same-session (`release-${{ github.ref }}`, no cancel) |
+| Attacker-controlled `github.head_ref` spliced inline into `run:`                                             | ci.yml:255 commit-lint step | not checked (out of schema scope: expression semantics)                | **CAUGHT** — `expression` rule, env-var mitigation prescribed               | fixed same-session (env indirection)                        |
+| env pin formats (`GOTOOLCHAIN: goX.Y.Z` exact, `GOLANGCI_LINT_VERSION: vX.Y.Z`, `GO_VERSION` float-or-patch) | all conform                 | **enforced** (regex violations fail vet)                               | not checked (no format policy)                                              | n/a                                                         |
+| Actions pinned to 40-char commit SHAs                                                                        | all conform                 | **enforced**                                                           | partially (shellcheck/scoring only; pinning is advisory in scoreboard mode) | n/a                                                         |
+| Runner allowlist (`ubuntu-latest` only)                                                                      | all conform                 | **enforced**                                                           | not checked                                                                 | n/a                                                         |
+| Least-privilege workflow `permissions` (`contents: write` exactly)                                           | conforms                    | **enforced**                                                           | not checked                                                                 | n/a                                                         |
+| Tag-only trigger shape (`([a-z0-9_-]+/)?v*` globs)                                                           | conforms                    | **enforced**                                                           | not checked                                                                 | n/a                                                         |
+| Workflow-type discrimination (negative control: release schema vs ci.yml)                                    | —                           | **rejects loudly** (`on.pull_request: field not allowed`)              | n/a (single generic checker)                                                | n/a                                                         |
+| Expression syntax/semantics, matrix expansion, shell quoting inside `run:`                                   | —                           | not covered (deliberate)                                               | **core competency**                                                         | n/a                                                         |
+| `on:` YAML key handling                                                                                      | —                           | parses correctly as the string `"on"` (no YAML 1.1 bool-true mangling) | n/a                                                                         | n/a                                                         |
 
 ## Verbatim capture — the two real findings
 
