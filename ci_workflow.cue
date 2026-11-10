@@ -4,7 +4,8 @@ package policy
 // workflows (ci.yml, nightly-fuzz.yml shapes): least-privilege read-only
 // contents permission, exact GOTOOLCHAIN pins wherever a GOTOOLCHAIN env is
 // set (the skew-preflight contract from the 2026-10-05..09 nightly crash
-// streak), the ubuntu-latest runner allowlist, and SHA-pinned actions.
+// streak), the runner allowlist (ubuntu-latest, plus ubuntu-24.04-arm
+// for arch-specific native jobs), and SHA-pinned actions.
 // Trigger sets vary per workflow (push+PR vs schedule+dispatch, with
 // fleet-legal path filters) and are only shape-checked here. Top-level env
 // beyond GOTOOLCHAIN is fleet-legal and unconstrained. Concurrency is
@@ -50,7 +51,13 @@ package policy
 	}
 
 	jobs!: [string]: {
-		"runs-on"!: "ubuntu-latest"
+		// Runner allowlist: the default x86 hosted lane, plus GitHub's
+		// arm64 hosted runner for arch-specific jobs that must execute
+		// natively (e.g. an aarch64 TCG boot proof: an x86 runner
+		// cannot run that suite, and the arm label is free for public
+		// repositories; decided in nix-international-telephony's
+		// ci.yml check-aarch64 job, 2026-11-10).
+		"runs-on"!: "ubuntu-latest" | "ubuntu-24.04-arm"
 		steps!: [...{
 			uses?: string & =~"^[^@ ]+@[0-9a-f]{40}( .*)?$"
 			...
