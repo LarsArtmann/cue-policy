@@ -24,21 +24,29 @@ fork copies of the rules. A fleet rule with two doc homes is a split brain.
 
 ## Status
 
-Pilot (2026-11-02): `#ReleaseWorkflow` authored against
-`LarsArtmann/httputil`'s three workflows; adopt/retire decision pending the
-CUE-vs-actionlint delta matrix (see httputil
-`docs/status/2026-11-02_04-56_cue-research-and-adoption-decision.md`).
+Adopted (2026-11-02): the [adoption memo](docs/2026-11-02_adoption-memo.md)
+decided CUE serves the fleet in exactly one lane — external `cue vet` policy
+schemas, complementing actionlint, never replacing it (evidence:
+[delta matrix](docs/2026-11-02_cue-vs-actionlint-delta-matrix.md)). Both
+schemas are live: `#ReleaseWorkflow` and `#CIWorkflow`. Rollout
+[wave 1](docs/2026-11-02_rollout-wave-1.md) vetted three repos read-only and
+found one consistent defect class fleet-wide: missing release concurrency
+guards. Research provenance: httputil
+`docs/status/2026-11-02_04-56_cue-research-and-adoption-decision.md`.
 
 ## Usage
 
 ```bash
 cue version                       # nixpkgs pin: cue 0.17.1
-cue vet -c .                    # self-check: the policies unify cleanly
-cue vet -c '#ReleaseWorkflow' <repo>/.github/workflows/release.yml
+cue vet -c .                      # self-check: the policies unify cleanly
+
+# consumer-side, from a repo with this one checked out at ./cue-policy:
+cue vet -d '#ReleaseWorkflow|#CIWorkflow' ./cue-policy .github/workflows/<wf>.yml
 ```
 
-Workflows are validated after a `yaml.Unmarshal`-conformant conversion —
-see the schema files for the exact invocation each policy expects.
+The consumer line is the exact CI invocation shape wave 1 ran. cue converts
+the YAML itself — the `on:` key parses as the string `"on"`, so there is no
+YAML 1.1 bool-true mangling to work around.
 
 ## Pin watching
 

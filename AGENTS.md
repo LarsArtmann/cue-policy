@@ -19,7 +19,7 @@ dprint check        # CI-equivalent format gate
 # the consumer invocation shape (run from a consumer repo):
 cue vet -d '#ReleaseWorkflow|#CIWorkflow' ./cue-policy <repo>/.github/workflows/<wf>.yml
 
-# pin-watching (both must agree, currently v0.17.1):
+# pin-watch (README "Pin watching" owns the current pin):
 nix eval --raw nixpkgs#cue.version
 cue version
 ```
@@ -46,10 +46,10 @@ cue version
 - **Open structs everywhere** (`...` at every level): fleet-legal constructs —
   manual dispatch with inputs, `paths`/`paths-ignore` filters,
   `pull_request: null`, workflow env beyond GOTOOLCHAIN, `id-token`
-  permissions, glob-style tags — must not fail vet. The first schema draft
-  rejected several of these and had to be generalized (commit `a3e9c79`).
-  When a consumer workflow fails vet, first ask: real policy drift, or a
-  fleet-legal shape the schema has never seen?
+  permissions, glob-style tags — must not fail vet. Over-restriction here is
+  the demonstrated failure mode (wave 1 caught the pilot schemas rejecting
+  several). When a consumer workflow fails vet, first ask: real policy drift,
+  or a fleet-legal shape the schema has never seen?
 - **Format-checks-when-present:** absence of an env pin (`GO_VERSION`,
   `GOTOOLCHAIN`, `GOLANGCI_LINT_VERSION`) is fleet-legal; only the FORMAT is
   enforced when present.
@@ -58,8 +58,8 @@ cue version
   `on.pull_request: field not allowed`) — that is intended, it is the
   negative control from the delta matrix.
 - Runner allowlists differ: `#CIWorkflow` allows `ubuntu-latest` +
-  `ubuntu-24.04-arm` (arm64 for arch-specific native jobs, decided
-  2026-11-10); `#ReleaseWorkflow` allows only `ubuntu-latest`.
+  `ubuntu-24.04-arm` (arm64 for arch-specific native jobs);
+  `#ReleaseWorkflow` allows only `ubuntu-latest`.
 - Actions `uses:` must be 40-char commit SHA pins
   (`^[^@ ]+@[0-9a-f]{40}( .*)?$`).
 - The YAML `on:` key parses as the string `"on"` under cue's YAML decoding —
@@ -67,18 +67,14 @@ cue version
 
 ## Pin-watching protocol (README "Pin watching" is authoritative)
 
-- Consumer CI pins TWO things independently: the cue tool version AND this
-  repo's commit SHA. A schema change without a consumer SHA bump silently
-  enforces the old policy forever; a tool bump without a schema check can
-  enforce the wrong one. After changing schemas here, consumer repos must
-  bump their `cue-policy` checkout SHA.
-- CUE is pre-1.0 and may churn between minors: before any bump (v0.18+),
-  re-run `cue vet -c .` here AND the httputil vet invocations; schemas may
-  need `cue fmt` or constraint updates. Record the new pin in README, in
-  `cue.mod/module.cue` (`language.version` moves in lockstep), and in
-  consumer CI (`go install cuelang.org/go/cmd/cue@vX.Y.Z` + checkout SHA).
-- The nixpkgs cue binary may report `version (devel)` — the nix derivation is
-  the pin, not the binary string.
+- The agent-critical rule: consumer CI pins the cue tool version AND this
+  repo's commit SHA independently. After ANY schema change here, consumer
+  repos must bump their cue-policy checkout SHA — otherwise they silently
+  enforce the old policy forever.
+- CUE is pre-1.0 and may churn between minors: on any cue bump, re-run
+  `cue vet -c .` here plus the consumer vet invocations BEFORE touching
+  consumer pins. README records the full protocol and the current pin;
+  `cue.mod/module.cue` (`language.version`) moves in lockstep.
 
 ## Repo layout
 
@@ -88,9 +84,8 @@ cue version
   actions, ubuntu-latest). `#CIWorkflow`: ci.yml/nightly shapes
   (`contents: read`, GOTOOLCHAIN exact-pin-if-present, runner allowlist).
 - `docs/` — dated decision records (`YYYY-MM-DD_topic.md`). The adoption memo
-  (2026-11-02) is the ADR: CUE adopted in exactly one lane (external vet),
-  complementing actionlint, never replacing it. Rollout wave 1 found exactly
-  one defect class fleet-wide: missing release concurrency guards.
+  is the ADR: CUE adopted in exactly one lane (external vet), complementing
+  actionlint, never replacing it.
 - `.config/metadata.yaml` — meta inventory registration (generated).
 - `SECURITY.md` — maintained with `securitymd`.
 - `.gitignore` — BuildFlow-managed block between `>>> buildflow-managed`
