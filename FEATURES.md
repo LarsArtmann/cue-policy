@@ -9,13 +9,13 @@
 Every label answers ONE question: does working code exist — and if not, why
 not?
 
-| Status                    | Meaning                                                                                                                                                  |
-| ------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| 🟢 `FULLY_FUNCTIONAL`     | Works as intended, exercised by tests or daily use.                                                                                                      |
-| 🟡 `PARTIALLY_FUNCTIONAL` | Ships but has known gaps, edge-case bugs, or missing pieces.                                                                                             |
-| 🔴 `BROKEN`               | Present in code but failing. Keep BROKEN nameable — "zero BROKEN rows" is itself information.                                                            |
-| 🔵 `DISABLED`             | Code exists and is correct, but execution is externally switched off (flag, missing credentials, CI off). A switch, not a fix — never fold into BROKEN.  |
-| ⚪ `PLANNED`              | No code yet; genuinely next on the build path.                                                                                                           |
+| Status                    | Meaning                                                                                                                                                 |
+| ------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| 🟢 `FULLY_FUNCTIONAL`     | Works as intended, exercised by tests or daily use.                                                                                                     |
+| 🟡 `PARTIALLY_FUNCTIONAL` | Ships but has known gaps, edge-case bugs, or missing pieces.                                                                                            |
+| 🔴 `BROKEN`               | Present in code but failing. Keep BROKEN nameable — "zero BROKEN rows" is itself information.                                                           |
+| 🔵 `DISABLED`             | Code exists and is correct, but execution is externally switched off (flag, missing credentials, CI off). A switch, not a fix — never fold into BROKEN. |
+| ⚪ `PLANNED`              | No code yet; genuinely next on the build path.                                                                                                          |
 
 > A feature earns `FULLY_FUNCTIONAL` only when you can point to the code that
 > delivers it AND confirm it works. If you're unsure, it's
@@ -23,22 +23,22 @@ not?
 
 ## Policy schemas
 
-| Feature          | Status                | Evidence                                                            | Notes                                                                                                                                        |
-| ---------------- | --------------------- | ------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------- |
-| `#ReleaseWorkflow` | 🟢 `FULLY_FUNCTIONAL` | `release_workflow.cue:17`; exercised in the pilot + wave 1          | Vets release.yml: tag-or-dispatch triggers, `contents: write` floor, REQUIRED concurrency guard, env pin formats, SHA-pinned actions, ubuntu-latest. Caught missing concurrency guards in four fleet repos |
-| `#CIWorkflow`      | 🟢 `FULLY_FUNCTIONAL` | `ci_workflow.cue:15`; wave-1 vet passed on all five CI-shaped workflows | Vets ci/nightly shapes: `contents: read`, exact GOTOOLCHAIN pin when present, runner allowlist (ubuntu-latest + ubuntu-24.04-arm), SHA-pinned actions |
+| Feature            | Status                | Evidence                                                                | Notes                                                                                                                                                                                                      |
+| ------------------ | --------------------- | ----------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `#ReleaseWorkflow` | 🟢 `FULLY_FUNCTIONAL` | `release_workflow.cue:17`; exercised in the pilot + wave 1              | Vets release.yml: tag-or-dispatch triggers, `contents: write` floor, REQUIRED concurrency guard, env pin formats, SHA-pinned actions, ubuntu-latest. Caught missing concurrency guards in four fleet repos |
+| `#CIWorkflow`      | 🟢 `FULLY_FUNCTIONAL` | `ci_workflow.cue:15`; wave-1 vet passed on all five CI-shaped workflows | Vets ci/nightly shapes: `contents: read`, exact GOTOOLCHAIN pin when present, runner allowlist (ubuntu-latest + ubuntu-24.04-arm), SHA-pinned actions                                                      |
 
 ## Self-verification
 
-| Feature                              | Status                | Evidence                                       | Notes                                                                       |
-| ------------------------------------ | --------------------- | ---------------------------------------------- | --------------------------------------------------------------------------- |
-| Self-check (`cue vet -c .`)          | 🟡 `PARTIALLY_FUNCTIONAL` | `README.md` "Usage"; verified passing 2026-11-14 | Works, but runs only manually — no CI of this repo's own yet (see TODO_LIST) |
+| Feature                     | Status                    | Evidence                                         | Notes                                                                        |
+| --------------------------- | ------------------------- | ------------------------------------------------ | ---------------------------------------------------------------------------- |
+| Self-check (`cue vet -c .`) | 🟡 `PARTIALLY_FUNCTIONAL` | `README.md` "Usage"; verified passing 2026-11-14 | Works, but runs only manually — no CI of this repo's own yet (see TODO_LIST) |
 
 ## Future schemas
 
-| Feature       | Status                | Evidence                                       | Notes                                                                  |
-| ------------- | --------------------- | ---------------------------------------------- | ---------------------------------------------------------------------- |
-| `#Changelog`  | ⚪ `DEMAND_GATED`      | `release_workflow.cue:15` header comment       | CHANGELOG compare-link rules named as a future schema; built on demand |
+| Feature      | Status            | Evidence                                 | Notes                                                                  |
+| ------------ | ----------------- | ---------------------------------------- | ---------------------------------------------------------------------- |
+| `#Changelog` | ⚪ `DEMAND_GATED` | `release_workflow.cue:15` header comment | CHANGELOG compare-link rules named as a future schema; built on demand |
 
 > No BROKEN or DISABLED rows as of this inventory. Sweep date: 2026-11-14,
 > against `cue` v0.17.1 and git history through `13acc06`.

@@ -58,6 +58,9 @@ nix eval --raw nixpkgs#cue.version        # the nixpkgs pin (0.17.1 as of 2026-1
 cue version                                # the installed binary
 ```
 
+A nixpkgs-built cue binary may report `version (devel)` — the nix derivation
+is the pin, not the binary string.
+
 - When CUE ships a new minor (v0.18+), re-run the self-check
   (`cue vet -c .`) and the httputil vet invocations before bumping any
   consumer pin — schemas may need `cue fmt` or constraint updates.
