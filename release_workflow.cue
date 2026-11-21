@@ -67,11 +67,17 @@ package policy
 				uses?: string & =~"^[^@ ]+@[0-9a-f]{40}( .*)?$"
 				...
 			}]
+			// Job-level uses would make this a reusable-call job; the
+			// bottom value prunes this branch so the disjunction
+			// resolves to the call-job lane instead of staying open.
+			uses?: _|_
 			...
 		} | {
-			// GitHub forbids runs-on/steps on call jobs, so they are not
-			// required (and not modeled) in this lane.
-			uses!: string
+			// GitHub forbids runs-on/steps on call jobs; runs-on is not
+			// modeled here, and the steps bottom-discriminator prunes
+			// this branch for run jobs.
+			uses!:  string
+			steps?: _|_
 			...
 		}
 	...
