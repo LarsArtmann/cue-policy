@@ -65,8 +65,13 @@ package policy
 			// natively (e.g. an aarch64 TCG boot proof: an x86 runner
 			// cannot run that suite, and the arm label is free for public
 			// repositories; decided in nix-international-telephony's
-			// ci.yml check-aarch64 job, 2026-11-10).
-			"runs-on"!: "ubuntu-latest" | "ubuntu-24.04-arm"
+			// ci.yml check-aarch64 job, 2026-11-10). "ubuntu-24.04" is the
+			// pinned x86 lane repositories hold while GitHub migrates
+			// ubuntu-latest to Ubuntu 26 (go-sse chose it 2026-10-11; many
+			// fleet repos carry the same pin, so excluding it made every
+			// pinned workflow unsatisfiable — go-sse buildflow cue-vet
+			// reddened on 2026-11-21).
+			"runs-on"!: "ubuntu-latest" | "ubuntu-24.04" | "ubuntu-24.04-arm"
 			steps!: [...{
 				uses?: string & =~"^[^@ ]+@[0-9a-f]{40}( .*)?$"
 				...
