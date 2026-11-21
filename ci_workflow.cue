@@ -4,8 +4,9 @@ package policy
 // workflows (ci.yml, nightly-fuzz.yml shapes): least-privilege read-only
 // contents permission, exact GOTOOLCHAIN pins wherever a GOTOOLCHAIN env is
 // set (the skew-preflight contract from the 2026-10-05..09 nightly crash
-// streak), the runner allowlist (ubuntu-latest, plus ubuntu-24.04-arm
-// for arch-specific native jobs), and SHA-pinned actions.
+// streak), the runner allowlist (ubuntu-latest, the pinned ubuntu-24.04
+// x86 lane, plus ubuntu-24.04-arm for arch-specific native jobs), and
+// SHA-pinned actions.
 // Trigger sets vary per workflow (push+PR vs schedule+dispatch, with
 // fleet-legal path filters) and are only shape-checked here. Top-level env
 // beyond GOTOOLCHAIN is fleet-legal and unconstrained. Concurrency is

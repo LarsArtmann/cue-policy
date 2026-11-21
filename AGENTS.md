@@ -57,8 +57,9 @@ cue version
   type loudly (e.g. `#ReleaseWorkflow` on a ci.yml fails on
   `on.pull_request: field not allowed`) — that is intended, it is the
   negative control from the delta matrix.
-- Runner allowlists differ: `#CIWorkflow` allows `ubuntu-latest` +
-  `ubuntu-24.04-arm` (arm64 for arch-specific native jobs);
+- Runner allowlists differ: `#CIWorkflow` allows `ubuntu-latest`,
+  `ubuntu-24.04` (the pinned x86 lane during GitHub's Ubuntu-26 migration)
+  and `ubuntu-24.04-arm` (arm64 for arch-specific native jobs);
   `#ReleaseWorkflow` allows only `ubuntu-latest`.
 - Actions `uses:` must be 40-char commit SHA pins
   (`^[^@ ]+@[0-9a-f]{40}( .*)?$`).

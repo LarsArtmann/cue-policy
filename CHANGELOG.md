@@ -8,6 +8,15 @@ releases are tagged yet; everything below is unreleased.
 
 ## [Unreleased]
 
+### Fixed
+
+- `#CIWorkflow`'s runner allowlist admitted `ubuntu-latest` and
+  `ubuntu-24.04-arm` but not the pinned `ubuntu-24.04` x86 lane, so every
+  fleet repo holding that pin (go-sse, crush-daily, go-paperless, …) was
+  unsatisfiable under `cue vet` — reported as `conflicting values` at the
+  `runs-on` field. The label is now allowed; it is the deliberate hedge
+  while GitHub migrates `ubuntu-latest` to Ubuntu 26.
+
 ### Added
 
 - `#ReleaseWorkflow` schema pinning the fleet's release.yml invariants:
