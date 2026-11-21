@@ -57,13 +57,22 @@ package policy
 		"cancel-in-progress"!: bool
 	}
 
-	jobs!: [string]: {
-		"runs-on"!: "ubuntu-latest"
-		steps!: [...{
-			uses?: string & =~"^[^@ ]+@[0-9a-f]{40}( .*)?$"
+	jobs!: [string]:
+		// Run job or reusable-call job — see #CIWorkflow.jobs for the
+		// full rationale (GitHub forbids runs-on/steps on call jobs;
+		// required unconditionally, they made call jobs unsatisfiable).
+		{
+			"runs-on"!: "ubuntu-latest"
+			steps!: [...{
+				uses?: string & =~"^[^@ ]+@[0-9a-f]{40}( .*)?$"
+				...
+			}]
 			...
-		}]
-		...
-	}
+		} | {
+			// GitHub forbids runs-on/steps on call jobs, so they are not
+			// required (and not modeled) in this lane.
+			uses!: string
+			...
+		}
 	...
 }

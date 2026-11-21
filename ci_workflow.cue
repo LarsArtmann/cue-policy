@@ -50,19 +50,33 @@ package policy
 		...
 	}
 
-	jobs!: [string]: {
-		// Runner allowlist: the default x86 hosted lane, plus GitHub's
-		// arm64 hosted runner for arch-specific jobs that must execute
-		// natively (e.g. an aarch64 TCG boot proof: an x86 runner
-		// cannot run that suite, and the arm label is free for public
-		// repositories; decided in nix-international-telephony's
-		// ci.yml check-aarch64 job, 2026-11-10).
-		"runs-on"!: "ubuntu-latest" | "ubuntu-24.04-arm"
-		steps!: [...{
-			uses?: string & =~"^[^@ ]+@[0-9a-f]{40}( .*)?$"
+	jobs!: [string]:
+		// A job is a run job (the default lane) or a reusable-call job
+		// (job-level `uses` naming a reusable workflow or local action).
+		// GitHub's grammar makes the pair mutually exclusive: a call job
+		// MUST NOT carry runs-on/steps (the API rejects them), a run job
+		// must carry both. Before 2026-11-21 the policy required
+		// runs-on/steps unconditionally, making every reusable-call job
+		// unsatisfiable — the shape that forced workflow-staging commits
+		// fleet-wide through --no-verify (cmdguard SU45/T27).
+		{
+			// Runner allowlist: the default x86 hosted lane, plus GitHub's
+			// arm64 hosted runner for arch-specific jobs that must execute
+			// natively (e.g. an aarch64 TCG boot proof: an x86 runner
+			// cannot run that suite, and the arm label is free for public
+			// repositories; decided in nix-international-telephony's
+			// ci.yml check-aarch64 job, 2026-11-10).
+			"runs-on"!: "ubuntu-latest" | "ubuntu-24.04-arm"
+			steps!: [...{
+				uses?: string & =~"^[^@ ]+@[0-9a-f]{40}( .*)?$"
+				...
+			}]
 			...
-		}]
-		...
-	}
+		} | {
+			// GitHub forbids runs-on/steps on call jobs, so they are not
+			// required (and not modeled) in this lane.
+			uses!: string
+			...
+		}
 	...
 }
